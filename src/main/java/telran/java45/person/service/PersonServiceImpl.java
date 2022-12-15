@@ -57,7 +57,7 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 	public PersonDto updatePersonName(Integer id, String name) {
 		Person person = personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException());
 		person.setName(name);
-		return modelMapper.map(person, PersonDto.class);
+		return modelMapper.map(person, getDtoClass(person));
 	}
 
 	@Override
@@ -132,6 +132,22 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 			return ChildDto.class;
 		}
 		return PersonDto.class;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Iterable<PersonDto> getChildren() {
+		return personRepository.findChildrenBy()
+				.map(c -> modelMapper.map(c, ChildDto.class))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Iterable<PersonDto> findEmployeeBySalary(Integer min, Integer max) {
+		return personRepository.findBySalaryBetween(min, max)
+				.map(e -> modelMapper.map(e, EmployeeDto.class))
+				.collect(Collectors.toList());
 	}
 
 }

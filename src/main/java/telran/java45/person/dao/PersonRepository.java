@@ -9,6 +9,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import telran.java45.person.dto.CityPopulationDto;
+import telran.java45.person.model.Child;
+import telran.java45.person.model.Employee;
 import telran.java45.person.model.Person;
 
 public interface PersonRepository extends CrudRepository<Person, Integer> {
@@ -23,4 +25,8 @@ public interface PersonRepository extends CrudRepository<Person, Integer> {
 	
 	@Query("select new telran.java45.person.dto.CityPopulationDto(p.address.city, count(p)) from Person p group by p.address.city")
 	List<CityPopulationDto> getCitiesPopulation();
+	
+	Stream<Child> findChildrenBy();
+	
+	Stream<Employee> findBySalaryBetween(int min, int max);
 }
